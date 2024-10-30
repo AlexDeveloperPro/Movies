@@ -1,0 +1,69 @@
+﻿@page
+@model Reviews.Pages.IndexModel
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@using Microsoft.AspNetCore.Identity
+
+@{
+    ViewData["Title"] = "Index";
+    var signedIn = SignInManager.IsSignedIn(User);
+    var isAdmin = User.IsInRole("admin");
+}
+
+<h1>Index</h1>
+
+@if (signedIn && isAdmin)
+{
+    <p>
+        <a asp-page="Create">Create New</a>
+    </p>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Movie[0].Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Movie[0].Director)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Movie[0].Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Movie[0].PosterUrl)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Movie) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                    @Html.DisplayFor(modelItem => item.Director)
+            </td>
+            <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+            </td>
+                <td class="imagetd">
+                   @*  @Html.DisplayFor(modelItem => item.PosterUrl) *@
+                    <img src="@item.PosterUrl" class="img-fluid img-thumbnail" width="200px"/>
+
+                </td>
+            <td>
+                <a asp-page="./Details" asp-route-id="@item.Id">Details</a>
+                @if (User.IsInRole("admin"))
+                {
+                    <span> | </span>
+                    <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a>
+                    <span> | </span>
+                    <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+                }
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
